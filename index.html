@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pixel Art Tool</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 1rem;
+      background: #f5f5f5;
+    }
+    .palette {
+      margin-bottom: 1rem;
+    }
+    .palette input {
+      margin: 0 5px;
+    }
+    #pixelGrid {
+      display: grid;
+      grid-template-columns: repeat(16, 20px);
+      grid-template-rows: repeat(16, 20px);
+      gap: 1px;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .cell {
+      width: 20px;
+      height: 20px;
+      background-color: white;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+    button {
+      padding: 6px 10px;
+      margin: 0 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🎨 Create Your Pixel Art!</h2>
+  <div class="palette">
+    <label for="colorPicker">Pick Color:</label>
+    <input type="color" id="colorPicker" value="#000000">
+    <button onclick="clearGrid()">Clear</button>
+  </div>
+
+  <div id="pixelGrid"></div>
+
+  <script>
+    const gridSize = 16;
+    const pixelGrid = document.getElementById('pixelGrid');
+    const colorPicker = document.getElementById('colorPicker');
+
+    for (let i = 0; i < gridSize * gridSize; i++) {
+      const cell = document.createElement('div');
+      cell.classList.add('cell');
+      cell.addEventListener('click', () => {
+        cell.style.backgroundColor = colorPicker.value;
+      });
+      pixelGrid.appendChild(cell);
+    }
+
+    function clearGrid() {
+      document.querySelectorAll('.cell').forEach(cell => {
+        cell.style.backgroundColor = 'white';
+      });
+    }
+  </script>
+
+</body>
+</html>
