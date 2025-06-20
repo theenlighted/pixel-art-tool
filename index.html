@@ -2,69 +2,178 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Pixel Art Tool</title>
+  <title>Pixel Art Tracer</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
     body {
-      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      font-family: 'Press Start 2P', cursive;
+      background: radial-gradient(circle at center, #1a1c2c, #0b0c10);
+      color: #ffffff;
       text-align: center;
-      padding: 1rem;
-      background: #f5f5f5;
     }
+
+    h1 {
+      font-size: 1.2rem;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 5px #00f0ff, 0 0 10px #00f0ff;
+    }
+
+    .game-shell {
+      display: inline-block;
+      margin-top: 2rem;
+      background: #2d2d44;
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    }
+
     .palette {
-      margin-bottom: 1rem;
-    }
-    .palette input {
-      margin: 0 5px;
-    }
-    #pixelGrid {
-      display: grid;
-      grid-template-columns: repeat(16, 20px);
-      grid-template-rows: repeat(16, 20px);
-      gap: 1px;
+      display: flex;
       justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
       margin-bottom: 1rem;
     }
-    .cell {
-      width: 20px;
-      height: 20px;
-      background-color: white;
-      border: 1px solid #ccc;
+
+    .swatch {
+      width: 28px;
+      height: 28px;
+      border: 2px solid white;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: transform 0.15s;
+    }
+
+    .swatch:hover {
+      transform: scale(1.2);
+    }
+
+    #colorPicker {
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
     }
+
     button {
-      padding: 6px 10px;
-      margin: 0 5px;
+      margin-top: 12px;
+      background-color: #00f0ff;
+      border: none;
+      padding: 10px 16px;
+      font-size: 0.7rem;
+      font-family: 'Press Start 2P', cursive;
+      cursor: pointer;
+      border-radius: 8px;
+      color: #111;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background-color: #0ef;
+    }
+
+    #pixelGrid {
+      display: grid;
+      grid-template-columns: repeat(16, 22px);
+      grid-template-rows: repeat(16, 22px);
+      gap: 2px;
+      justify-content: center;
+      padding: 1rem;
+      border-radius: 12px;
+      background-color: #ffffff;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+      box-shadow: inset 0 0 10px #000;
+    }
+
+    .cell {
+      width: 22px;
+      height: 22px;
+      background-color: rgba(255, 255, 255, 0.85);
+      border-radius: 3px;
+      transition: background-color 0.2s, transform 0.1s;
+      cursor: pointer;
+    }
+
+    .cell:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 4px #00f0ff;
+    }
+
+    footer {
+      margin-top: 2rem;
+      font-size: 0.65rem;
+      color: #aaa;
     }
   </style>
 </head>
 <body>
 
-  <h2>🎨 Create Your Pixel Art!</h2>
-  <div class="palette">
-    <label for="colorPicker">Pick Color:</label>
-    <input type="color" id="colorPicker" value="#000000">
-    <button onclick="clearGrid()">Clear</button>
+  <h1>🎮 Pixel Art Tracer</h1>
+  <div class="game-shell">
+    <div class="palette" id="colorPalette">
+      <div class="swatch" style="background:#000000"></div>
+      <div class="swatch" style="background:#ff4136"></div>
+      <div class="swatch" style="background:#2ecc40"></div>
+      <div class="swatch" style="background:#0074d9"></div>
+      <div class="swatch" style="background:#f1c40f"></div>
+      <div class="swatch" style="background:#ffffff"></div>
+      <input type="color" id="colorPicker" value="#000000">
+    </div>
+
+    <div id="pixelGrid"></div>
+    <button onclick="clearGrid()">🧼 Clear Grid</button>
   </div>
 
-  <div id="pixelGrid"></div>
+  <footer>Built by <strong>theenlighted</strong> — Trace the pixel legend 🧱</footer>
 
   <script>
+    const characters = [
+      'characters/pikachu.png',
+      'characters/mario.png',
+    ];
+
     const gridSize = 16;
     const pixelGrid = document.getElementById('pixelGrid');
     const colorPicker = document.getElementById('colorPicker');
+    let currentColor = colorPicker.value;
 
+    // Load random background template
+    const randomCharacter = characters[Math.floor(Math.random() * characters.length)];
+    pixelGrid.style.backgroundImage = `url('${randomCharacter}')`;
+
+    // Build grid
     for (let i = 0; i < gridSize * gridSize; i++) {
       const cell = document.createElement('div');
       cell.classList.add('cell');
       cell.addEventListener('click', () => {
-        cell.style.backgroundColor = colorPicker.value;
+        cell.style.backgroundColor = currentColor;
       });
       pixelGrid.appendChild(cell);
     }
 
+    // Update color from picker
+    colorPicker.addEventListener('input', () => {
+      currentColor = colorPicker.value;
+    });
+
+    // Handle swatch clicks
+    document.querySelectorAll('.swatch').forEach(swatch => {
+      swatch.addEventListener('click', () => {
+        currentColor = swatch.style.backgroundColor;
+      });
+    });
+
+    // Clear grid
     function clearGrid() {
       document.querySelectorAll('.cell').forEach(cell => {
-        cell.style.backgroundColor = 'white';
+        cell.style.backgroundColor = 'rgba(255, 255, 255, 0.85)';
       });
     }
   </script>
